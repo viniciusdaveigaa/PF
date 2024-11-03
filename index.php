@@ -1,33 +1,61 @@
 <?php
 session_start();
 
-// inicia 
 if (!isset($_SESSION['conversion_history'])) {
     $_SESSION['conversion_history'] = [];
 }
 
-// valida entrada
+// taxas de câmbio fixas
+$exchange_rates = [
+    'USD_BRL' => 5.70,
+    'EUR_BRL' => 6.20,
+    'GBP_BRL' => 7.50,
+    'JPY_BRL' => 0.05,
+    'BRL_USD' => 0.18,
+    'BRL_EUR' => 0.16,
+    'BRL_GBP' => 0.13,
+    'BRL_JPY' => 20.00,
+    'USD_EUR' => 0.88,
+    'USD_GBP' => 0.74,
+    'USD_JPY' => 114.00,
+    'EUR_USD' => 1.14,
+    'GBP_USD' => 1.36,
+    'JPY_USD' => 0.0088,
+];
+
 function validateInput($value) {
     return is_numeric($value) && $value > 0;
 }
 
-// Limpa hist
+function converterMoeda($amount, $exchange_rate) {
+    return $amount * $exchange_rate;
+}
+
 if (isset($_POST['clear_history'])) {
     $_SESSION['conversion_history'] = [];
 }
 
 if (isset($_POST['convert'])) {
     $amount = str_replace(['.', ','], ['', '.'], $_POST['amount']);
-    $exchange_rate = str_replace(['.', ','], ['', '.'], $_POST['exchange_rate']);
     $from_currency = $_POST['from_currency'];
     $to_currency = $_POST['to_currency'];
+    $exchange_key = "{$from_currency}_{$to_currency}";
+    $use_custom_rate = isset($_POST['use_custom_rate']);
+    $custom_exchange_rate = str_replace(['.', ','], ['', '.'], $_POST['exchange_rate']);
 
-    if (validateInput($amount) && validateInput($exchange_rate)) {
-        $converted_amount = $amount * $exchange_rate;
+    if ($use_custom_rate && validateInput($custom_exchange_rate)) {
+        $exchange_rate = $custom_exchange_rate;
+    } elseif (isset($exchange_rates[$exchange_key])) {
+        $exchange_rate = $exchange_rates[$exchange_key];
+    } else {
+        echo "<p>Não há taxa de câmbio disponível para essas moedas.</p>";
+        $exchange_rate = null;
+    }
+
+    if (validateInput($amount) && $exchange_rate) {
+        $converted_amount = converterMoeda($amount, $exchange_rate);
         $formatted_converted_amount = number_format($converted_amount, 2, ',', '.');
         $formatted_amount = number_format($amount, 2, ',', '.');
-        
-        // histórico
         $conversion_record = [
             'amount' => $formatted_amount,
             'from_currency' => $from_currency,
@@ -35,9 +63,9 @@ if (isset($_POST['convert'])) {
             'exchange_rate' => number_format($exchange_rate, 2, ',', '.'),
             'converted_amount' => $formatted_converted_amount
         ];
-        $_SESSION['conversion_history'][] = $conversion_record;
+        $_SESSION['conversion_history'][] = array_map(fn($item) => $item, $conversion_record);
     } else {
-        echo "<p>Por favor, insira valores numéricos positivos.</p>";
+        echo "<p>Por favor, insira um valor válido e selecione moedas compatíveis para conversão.</p>";
     }
 }
 ?>
@@ -50,13 +78,18 @@ if (isset($_POST['convert'])) {
     <title>Conversor de Moedas</title>
     <link rel="stylesheet" href="style.css">
     <script>
-        // máscara de moeda no valor
         function formatCurrency(input) {
             let value = input.value.replace(/\D/g, "");
             value = (value / 100).toFixed(2) + "";
             value = value.replace(".", ",");
             value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             input.value = value;
+        }
+
+        function toggleCustomRate() {
+            const customRateField = document.getElementById("customRateField");
+            const useCustomRate = document.getElementById("use_custom_rate").checked;
+            customRateField.style.display = useCustomRate ? "block" : "none";
         }
     </script>
 </head>
@@ -86,8 +119,15 @@ if (isset($_POST['convert'])) {
                     <option value="JPY">Iene Japonês (JPY)</option>
                 </select>
 
-                <label for="exchange_rate">Taxa de Câmbio:</label>
-                <input type="text" name="exchange_rate" id="exchange_rate" placeholder="Exemplo: 5,25" onkeyup="formatCurrency(this)" required style="color: black;">
+                <label>
+                    <input type="checkbox" name="use_custom_rate" id="use_custom_rate" onclick="toggleCustomRate()">
+                    Usar taxa de câmbio personalizada
+                </label>
+
+                <div id="customRateField" style="display: none;">
+                    <label for="exchange_rate">Taxa de Câmbio:</label>
+                    <input type="text" name="exchange_rate" id="exchange_rate" onkeyup="formatCurrency(this)" style="color: black;">
+                </div>
 
                 <button type="submit" name="convert">Converter</button>
             </form>
@@ -121,6 +161,5 @@ if (isset($_POST['convert'])) {
             <p>Desenvolvido por Vinícius da Veiga</p>
         </div>
     </footer>
-
 </body>
 </html>
