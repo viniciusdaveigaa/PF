@@ -104,7 +104,7 @@ if (isset($_POST['convert'])) {
                 <ul>
                     <?php foreach ($_SESSION['conversion_history'] as $record): ?>
                         <li>
-                            <?= "{$record['amount']} {$record['from_currency']} para {$record['to_currency']} com taxa {$record['exchange_rate']}: {$record['converted_amount']}" ?>
+                            <?= "{$record['amount']} {$record['from_currency']} para {$record['to_currency']} com taxa {$record['exchange_rate']} - Valor Final: {$record['converted_amount']}" ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>
