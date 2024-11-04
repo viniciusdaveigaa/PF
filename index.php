@@ -7,20 +7,20 @@ if (!isset($_SESSION['conversion_history'])) {
 
 // taxas de câmbio fixas
 $exchange_rates = [
-    'USD_BRL' => 5.70,
-    'EUR_BRL' => 6.20,
-    'GBP_BRL' => 7.50,
-    'JPY_BRL' => 0.05,
-    'BRL_USD' => 0.18,
-    'BRL_EUR' => 0.16,
-    'BRL_GBP' => 0.13,
-    'BRL_JPY' => 20.00,
-    'USD_EUR' => 0.88,
-    'USD_GBP' => 0.74,
-    'USD_JPY' => 114.00,
-    'EUR_USD' => 1.14,
-    'GBP_USD' => 1.36,
-    'JPY_USD' => 0.0088,
+    'USD_BRL' => 5.78,
+    'EUR_BRL' => 6.12,
+    'GBP_BRL' => 7.04,
+    'JPY_BRL' => 0.039,
+    'BRL_USD' => 0.173,
+    'BRL_EUR' => 0.163,
+    'BRL_GBP' => 0.142,
+    'BRL_JPY' => 25.64,
+    'USD_EUR' => 0.93,
+    'USD_GBP' => 0.82,
+    'USD_JPY' => 147.8,
+    'EUR_USD' => 1.07,
+    'GBP_USD' => 1.22,
+    'JPY_USD' => 0.0068,
 ];
 
 function validateInput($value) {
@@ -157,7 +157,7 @@ if (isset($_POST['convert'])) {
         </div>
     </div>
     <footer>
-        <div class="footer-content">
+        <div>
             <p>Desenvolvido por Vinícius da Veiga</p>
         </div>
     </footer>
