@@ -66,12 +66,12 @@ html, body {
     padding: 20px;
 }
 
-footer {
+.footer {
     background-color: grey;
     text-align: center;
     padding: 10px 0;
     width: 100%;
     position: relative;
     bottom: 0;
-    color: black;
+    color: grey;
 }

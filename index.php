@@ -138,7 +138,7 @@ if (isset($_POST['convert'])) {
             }
             ?>
         </div>
-        <div class="history">
+        <div>
             <h2>Histórico de Conversões</h2>
             <?php if (!empty($_SESSION['conversion_history'])): ?>
                 <ul>
@@ -156,7 +156,7 @@ if (isset($_POST['convert'])) {
             <?php endif; ?>
         </div>
     </div>
-    <footer>
+    <footer class="footer">
         <div>
             <p>Desenvolvido por Vinícius da Veiga</p>
         </div>
